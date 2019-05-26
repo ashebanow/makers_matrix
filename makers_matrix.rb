@@ -39,6 +39,9 @@ class MakersMatrix
     @failures = []
     level = 1
 
+    @sortilege = ask_numeric_question("How many sortilege for this challenge? (0-10, defaults to 0) ", 0, 10)
+    @bene_added = ask_numeric_question("How many bene do you wish to use? (0-10, defaults to 0) ", 0, 10)
+
     add_material(item_level)
     while level <= item_level
       add_ingredient(level)
@@ -178,8 +181,8 @@ private
   }
 
   def print_results
-    puts "Materials used: "
-    puts @materials
+    #puts "Materials used: "
+    #puts @materials
 
     @total_crystal_orbs = @materials.inject(0.0) { |crystal_orbs, material| crystal_orbs += material.value }
     @total_magecoins = @materials.inject(0.0) { |magecoins, material| magecoins += material.magecoins }
@@ -195,12 +198,10 @@ private
 
   def do_challenge(type, level)
     puts "Rolling challenge for %s, level %d" % [ type, level ]
-    sortilege = ask_numeric_question("How many sortilege for this challenge? (0-10, defaults to 0) ", 0, 10)
-    bene_added = ask_numeric_question("How many bene do you wish to use? (0-10, defaults to 0) ", 0, 10)
-    dice = Dice.new(sortilege + 1, 10)
-    dice += bene_added if bene_added > 0
+    dice = Dice.new(@sortilege + 1, 10)
+    dice += @bene_added if @bene_added > 0
     roll = dice.best(1)
-    puts "dice best roll: ", roll
+    # puts "dice best roll: ", roll
     return roll >= level
   end
 
