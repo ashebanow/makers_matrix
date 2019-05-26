@@ -37,12 +37,10 @@ class MakersMatrix
   def run_matrix(item_level, use_sooth_deck: false)
     @materials = []
     @failures = []
-    @d10 = Dice.new(1, 10)
-    @d10_with_sortilege = Dice.new(2, 10)
     level = 1
 
     add_material(item_level)
-    while level < item_level
+    while level <= item_level
       add_ingredient(level)
       level += 1
       # ask user whether or not they wish to continue.
@@ -62,20 +60,23 @@ class MakersMatrix
 
   def add_material(level)
     push_material(:material, level)    
-
-    # if challenge fails, add_catalyst at level + 1
-    add_catalyst(level + 1) if !do_challenge(:material, level)
   end
 
   def add_ingredient(level)
     push_material(:ingredient, level)
+
+    if !do_challenge(:ingredient, level)
+      puts "FAILURE adding ingredient"
+      # if challenge fails, add_catalyst at level + 1
+      add_catalyst(level + 1)
+    end
   end
 
   def add_catalyst(level)
     push_material(:catalyst, level)    
 
     if do_challenge(:catalyst, level)
-      # continue with minor side effect.
+      puts "MINOR SIDE EFFECT!!!"
     else
       add_stabilizer(level)
     end
@@ -84,20 +85,21 @@ class MakersMatrix
   def add_stabilizer(level)
     push_material(:stabilizer, level)    
 
-    if do_challenge(:catalyst, level)
-      # continue with major side effect.
+    if do_challenge(:stabilizer, level)
+      puts "MAJOR SIDE EFFECT!!!"
     else
-      # mishap!
+      puts "MISHAP!!!"
     end
   end
 
   def add_power_source(level)
     push_material(:power_source, level)    
 
-    if do_challenge(:catalyst, level)
+    if do_challenge(:power_source, level)
       # item is created.
     else
       # mishap!
+      puts "MISHAP!!!"
     end
   end
 
@@ -193,14 +195,13 @@ private
 
   def do_challenge(type, level)
     puts "Rolling challenge for %s, level %d" % [ type, level ]
-    use_sortilege = ask_yes_no_question("Do you want to use sortilege for this challenge? (Y/n) ")
+    sortilege = ask_numeric_question("How many sortilege for this challenge? (0-10, defaults to 0) ", 0, 10)
     bene_added = ask_numeric_question("How many bene do you wish to use? (0-10, defaults to 0) ", 0, 10)
-    dice = use_sortilege ? @d10_with_sortilege : @d10
+    dice = Dice.new(sortilege + 1, 10)
     dice += bene_added if bene_added > 0
-    roll = dice.roll(true)
-    puts "dice rolled: ", roll
-    p dice
-    return roll 
+    roll = dice.best(1)
+    puts "dice best roll: ", roll
+    return roll >= level
   end
 
   def ask_yes_no_question(prompt, default_true=true)
