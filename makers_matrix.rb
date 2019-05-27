@@ -16,31 +16,18 @@ class MakersMatrix
   end
 
   MaterialUsed = Struct.new(:material_type, :level, :value, :magecoins) do
-    def to_s
-      value 
-      if value && magecoins && value > 0.0 && magecoins > 0.0
-        puts "Level %d %s: cost of %.2f Crystal Orbs and %.2f Magecoins" %
-            [level, material_type, level, value, magecoins]
-      elsif value && value > 0.0
-        puts "Level %d %s: cost of %.2f Crystal Orbs" %
-            [level, material_type, value]
-      elsif magecoins && magecoins > 0
-        puts "Level %d %s: cost of %.2f Magecoins" %
-            [level, material_type, magecoins]
-      else
-        puts "Level %d %s: no cost" %
-            [level, material_type]
-      end
-    end
+  end
+
+  SideEffect = Struct.new(:type, :level) do
   end
 
   def run_matrix(item_level, use_sooth_deck: false)
     @materials = []
-    @failures = []
+    @effects = []
     level = 1
 
-    @sortilege = ask_numeric_question("How many sortilege for this challenge? (0-10, defaults to 0) ", 0, 10)
-    @bene_added = ask_numeric_question("How many bene do you wish to use? (0-10, defaults to 0) ", 0, 10)
+    @bene_added = ask_numeric_question("How many Intellect bene do you wish to use PER ROLL? (0-10, defaults to 0) ", 0, 10)
+    @skill_bene = ask_numeric_question("How many relevant skill levels do you have? (0-10, defaults to 0) ", 0, 10)
 
     add_material(item_level)
     while level <= item_level
@@ -51,7 +38,7 @@ class MakersMatrix
         # if so, then keep adding ingrediants  
       else
         # if not, create random item at current level'
-        puts "Created a RANDOM level %d item" % [level]
+        puts "Created a RANDOM L%d item" % [level]
         print_results
         return
       end
@@ -62,14 +49,17 @@ class MakersMatrix
   end
 
   def add_material(level)
-    push_material(:material, level)    
+    push_material(:material, level)
+    puts "Added L%d material successfully" % [ level ]
   end
 
   def add_ingredient(level)
     push_material(:ingredient, level)
 
-    if !do_challenge(:ingredient, level)
-      puts "FAILURE adding ingredient"
+    if roll_challenge(:ingredient, level)
+      puts "Added L%d ingredient successfully" % [ level ]
+    else
+      puts "FAILURE adding L%d ingredient" % [ level ]
       # if challenge fails, add_catalyst at level + 1
       add_catalyst(level + 1)
     end
@@ -78,31 +68,35 @@ class MakersMatrix
   def add_catalyst(level)
     push_material(:catalyst, level)    
 
-    if do_challenge(:catalyst, level)
-      puts "MINOR SIDE EFFECT!!!"
+    if roll_challenge(:catalyst, level)
+      puts "Added L%d catalyst successfully" % [ level ]
+      @effects.push(SideEffect.new(:minor_effect, level))
     else
-      add_stabilizer(level)
+      puts "FAILURE adding L%d catalyst" % [ level ]
+      add_stabilizer(level + 1)
     end
   end
 
   def add_stabilizer(level)
     push_material(:stabilizer, level)    
 
-    if do_challenge(:stabilizer, level)
-      puts "MAJOR SIDE EFFECT!!!"
+    if roll_challenge(:stabilizer, level)
+      puts "Added L%d stabilizer successfully" % [ level ]
+      @effects.push(SideEffect.new(:major_effect, level))
     else
-      puts "MISHAP!!!"
+      puts "FAILURE adding L%d stabilizer" % [ level ]
+      @effects.push(SideEffect.new(:mishap, level))
     end
   end
 
   def add_power_source(level)
     push_material(:power_source, level)    
 
-    if do_challenge(:power_source, level)
-      # item is created.
+    if roll_challenge(:power_source, level)
+      puts "Added L%d power source successfully" % [ level ]
     else
-      # mishap!
-      puts "MISHAP!!!"
+      puts "FAILURE adding L%d power source" % [ level ]
+      @effects.push(SideEffect.new(:mishap, level))
     end
   end
 
@@ -180,12 +174,23 @@ private
     :power_source => POWER_SOURCES
   }
 
-  def print_results
-    #puts "Materials used: "
-    #puts @materials
+  SIDE_EFFECT_MAP = {
+    :minor_effect => "Minor Effect",
+    :major_effect => "Major Effect",
+    :mishap => "Mishap"
+  }
 
-    @total_crystal_orbs = @materials.inject(0.0) { |crystal_orbs, material| crystal_orbs += material.value }
-    @total_magecoins = @materials.inject(0.0) { |magecoins, material| magecoins += material.magecoins }
+  def print_results
+    @effects.each { |effect|
+      puts "Item Effect: L%d %s" % [ effect.level, SIDE_EFFECT_MAP[effect.type] ]
+    }
+
+    @total_crystal_orbs = @materials.inject(0.0) { |crystal_orbs, material|
+      crystal_orbs += material.value
+    }
+    @total_magecoins = @materials.inject(0.0) { |magecoins, material|
+      magecoins += material.magecoins
+    }
     puts "Total cost to make item: %.2f Crystal Orbs, %.2f Magecoins" % [@total_crystal_orbs, @total_magecoins]
   end
 
@@ -196,12 +201,11 @@ private
     return material_used
   end
 
-  def do_challenge(type, level)
-    puts "Rolling challenge for %s, level %d" % [ type, level ]
-    dice = Dice.new(@sortilege + 1, 10)
-    dice += @bene_added if @bene_added > 0
+  def roll_challenge(type, level)
+    dice = Dice.new(1, 10)
+    total_bene = @bene_added + @skill_bene
+    dice += total_bene if total_bene > 0
     roll = dice.best(1)
-    # puts "dice best roll: ", roll
     return roll >= level
   end
 
