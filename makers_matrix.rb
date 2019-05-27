@@ -1,5 +1,6 @@
 
 require_relative 'dice'
+require_relative 'maker_effects'
 
 class MakersMatrix
   VERSION = "0.0.1 prealpha"
@@ -24,6 +25,7 @@ class MakersMatrix
   def run_matrix(item_level, use_sooth_deck: false)
     @materials = []
     @effects = []
+    @effects_lookup = MakerEffects.new;
     level = 1
 
     @bene_added = ask_numeric_question("How many Intellect bene do you wish to use PER ROLL? (0-10, defaults to 0) ", 0, 10)
@@ -184,8 +186,14 @@ private
   }
 
   def print_results
+    puts
+    puts "ITEM SUMMARY"
+
     @effects.each { |effect|
-      puts "Item Effect: L%d %s" % [ effect.level, SIDE_EFFECT_MAP[effect.type] ]
+      puts "%s: %s" % [
+        SIDE_EFFECT_MAP[effect.type],
+        @effects_lookup.roll_effect(effect.type)
+      ]
     }
 
     @total_crystal_orbs = @materials.inject(0.0) { |crystal_orbs, material|
