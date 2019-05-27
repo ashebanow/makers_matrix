@@ -31,12 +31,10 @@ class MakersMatrix
 
     add_material(item_level)
     while level <= item_level
-      add_ingredient(level)
+      failed = add_ingredient(level)
       level += 1
       # ask user whether or not they wish to continue.
-      if ask_yes_no_question("Do you wish to continue? (Y/n) ")
-        # if so, then keep adding ingrediants  
-      else
+      if failed && !ask_yes_no_question("Do you wish to continue? (Y/n) ")
         # if not, create random item at current level'
         puts "Created a RANDOM L%d item" % [level]
         print_results
@@ -54,6 +52,8 @@ class MakersMatrix
   end
 
   def add_ingredient(level)
+    failed = false
+
     push_material(:ingredient, level)
 
     if roll_challenge(:ingredient, level)
@@ -62,7 +62,10 @@ class MakersMatrix
       puts "FAILURE adding L%d ingredient" % [ level ]
       # if challenge fails, add_catalyst at level + 1
       add_catalyst(level + 1)
+      failed = true
     end
+
+    return failed
   end
 
   def add_catalyst(level)
