@@ -2,15 +2,19 @@
 class MakerEffects
 
 def roll_effect(type)
-	effect_table = EFFECTS[type] || MINOR_EFFECTS
+	effect_table = EFFECTS[type]
+	if !effect_table
+		puts "Unknown effect type: %s" % [ type ]
+		return "Unknown"
+	end
     dice = Dice.new(1, effect_table.length)
     roll = dice.best(1)
-    return effect_table[roll]
+    return effect_table[roll - 1]
 end
 
 private
 
-MINOR_EFFECTS = [
+MINOR_EFFECT = [
 	"Item glows blue when used",
 	"Item whispers unintelligibly when used",
 	"Random nearby being gets a minor, non-damaging jolt when item is used",
@@ -37,7 +41,7 @@ MINOR_EFFECTS = [
 	"User experiences minor magical flux with each use"
 ]
 
-MAJOR_EFFECTS = [
+MAJOR_EFFECT = [
 	"Item inflicts 1 point of damage per level on user each time it is used",
 	"Item drains nearby ephemera when used",
 	"Item puts a scourge on the Perception pool of anyone possessing it, impossible to remove unless item is dropped",
@@ -70,7 +74,7 @@ MAJOR_EFFECTS = [
 	"User experiences major magical flux with each use"
 ]
 
-MISHAPS = [
+MISHAP = [
 	"Process explodes, inflicting damage equal to the desired item level on all nearby",
 	"Location where mishap occurs is seriously damaged, requiring ten weeks of repair costing 500 crystal orbs.",
 	"Item gains intelligence and deep hatred for Maker. It teleports away, vowing vengeance.",
@@ -93,9 +97,9 @@ MISHAPS = [
 ]
 
 EFFECTS = {
-	:minor_effect => MINOR_EFFECTS,
-	:major_effect => MAJOR_EFFECTS,
-	:mishaps => MISHAPS
+	:minor_effect => MINOR_EFFECT,
+	:major_effect => MAJOR_EFFECT,
+	:mishap => MISHAP
 }
 
 end
