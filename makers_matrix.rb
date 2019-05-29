@@ -58,7 +58,6 @@ class MakersMatrix
           return
         end
       end
-
     end
 
     add_power_source
@@ -102,19 +101,15 @@ private
     puts "Added L%d power source" % [ @current_level ]
   end
 
-  # all values are in Crystal Orbs (CO). One orb is 0.01 CO, one magecoin is 200 CO but
-  # is specified as a separate entry per row
-  ComponentCost = Struct.new(:value, :magecoins) do
+  ComponentCost = Struct.new(:crystal_orbs, :magecoins) do
     def to_ary
-      [value, magecoins]
+      [crystal_orbs, magecoins]
     end
   end
 
-  ComponentUsed = Struct.new(:type, :level, :value, :magecoins) do
-  end
+  ComponentUsed = Struct.new(:type, :level, :crystal_orbs, :magecoins)
 
-  SideEffect = Struct.new(:type, :level) do
-  end
+  SideEffect = Struct.new(:type, :level)
 
   MATERIALS = [
     ComponentCost.new( 10,  0),
@@ -126,7 +121,8 @@ private
     ComponentCost.new(  0,  3),
     ComponentCost.new(  0,  7),
     ComponentCost.new(  0, 20),
-    ComponentCost.new(  0, 50)
+    ComponentCost.new(  0, 50),
+    ComponentCost.new(  0, 120)
   ]
 
   INGREDIENTS = [
@@ -139,7 +135,8 @@ private
     ComponentCost.new(  0,   1),
     ComponentCost.new(  0,   5),
     ComponentCost.new(  0,  12),
-    ComponentCost.new(  0,  30)
+    ComponentCost.new(  0,  30),
+    ComponentCost.new(  0,  72)
   ]
 
   CATALYSTS = [
@@ -152,7 +149,8 @@ private
     ComponentCost.new(  0,   1),
     ComponentCost.new(  0,   5),
     ComponentCost.new(  0,  12),
-    ComponentCost.new(  0,  30)
+    ComponentCost.new(  0,  30),
+    ComponentCost.new(  0,  72)
   ]
 
   STABILIZERS = [
@@ -165,7 +163,8 @@ private
     ComponentCost.new(  0,   1),
     ComponentCost.new(  0,   5),
     ComponentCost.new(  0,  12),
-    ComponentCost.new(  0,  30)
+    ComponentCost.new(  0,  30),
+    ComponentCost.new(  0,  72)
   ]
 
   POWER_SOURCES = [
@@ -178,7 +177,8 @@ private
     ComponentCost.new(  0,  4),
     ComponentCost.new(  0,  5),
     ComponentCost.new(  0,  6),
-    ComponentCost.new(  0,  7)
+    ComponentCost.new(  0,  7),
+    ComponentCost.new(  0,  8)
   ]
 
   COMPONENT_TYPE_MAP = {
@@ -207,7 +207,7 @@ private
     }
 
     @total_crystal_orbs = @components_used.inject(0.0) { |crystal_orbs, material|
-      crystal_orbs += material.value
+      crystal_orbs += material.crystal_orbs
     }
     @total_magecoins = @components_used.inject(0.0) { |magecoins, material|
       magecoins += material.magecoins
@@ -216,8 +216,9 @@ private
   end
 
   def push_component(type, level)
-    value, magecoins = COMPONENT_TYPE_MAP[type][level - 1]
-    component_used = ComponentUsed.new(type, level, value, magecoins)
+    crystal_orbs, magecoins = COMPONENT_TYPE_MAP[type][level - 1]
+    puts "push_component: L%d %s %d crystal_orbs %d magecoins" % [ level, type, crystal_orbs, magecoins ]
+    component_used = ComponentUsed.new(type, level, crystal_orbs, magecoins)
     @components_used.push(component_used)
     return component_used
   end
