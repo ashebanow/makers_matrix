@@ -112,73 +112,73 @@ private
   SideEffect = Struct.new(:type, :level)
 
   MATERIALS = [
-    ComponentCost.new( 10,  0),
-    ComponentCost.new( 25,  0),
-    ComponentCost.new( 75,  0),
-    ComponentCost.new(200,  0),
-    ComponentCost.new(500,  0),
-    ComponentCost.new(  0,  1),
-    ComponentCost.new(  0,  3),
-    ComponentCost.new(  0,  7),
-    ComponentCost.new(  0, 20),
-    ComponentCost.new(  0, 50),
-    ComponentCost.new(  0, 120)
+    ComponentCost.new( 10,   0),
+    ComponentCost.new( 25,   0),
+    ComponentCost.new( 50,   0),
+    ComponentCost.new( 75,   0),
+    ComponentCost.new(100,   0),
+    ComponentCost.new(150,   0),
+    ComponentCost.new(200,   0),
+    ComponentCost.new(  0,   1),
+    ComponentCost.new(  0,   2),
+    ComponentCost.new(  0,   3),
+    ComponentCost.new(  0,   4)
   ]
 
   INGREDIENTS = [
     ComponentCost.new(0.1,   0),
     ComponentCost.new(0.5,   0),
-    ComponentCost.new(  2,   0),
+    ComponentCost.new(  1,   0),
+    ComponentCost.new(  5,   0),
     ComponentCost.new( 10,   0),
+    ComponentCost.new( 20,   0),
     ComponentCost.new( 50,   0),
-    ComponentCost.new(200,   0),
     ComponentCost.new(  0,   1),
-    ComponentCost.new(  0,   5),
-    ComponentCost.new(  0,  12),
-    ComponentCost.new(  0,  30),
-    ComponentCost.new(  0,  72)
+    ComponentCost.new(  0,   2),
+    ComponentCost.new(  0,   3),
+    ComponentCost.new(  0,   4)
   ]
 
   CATALYSTS = [
     ComponentCost.new(0.1,   0),
     ComponentCost.new(0.5,   0),
+    ComponentCost.new(  1,   0),
     ComponentCost.new(  2,   0),
+    ComponentCost.new(  5,   0),
     ComponentCost.new( 10,   0),
-    ComponentCost.new( 50,   0),
-    ComponentCost.new(200,   0),
+    ComponentCost.new( 20,   1),
+    ComponentCost.new( 50,   5),
     ComponentCost.new(  0,   1),
-    ComponentCost.new(  0,   5),
-    ComponentCost.new(  0,  12),
-    ComponentCost.new(  0,  30),
-    ComponentCost.new(  0,  72)
+    ComponentCost.new(  0,   2),
+    ComponentCost.new(  0,   3)
   ]
 
   STABILIZERS = [
     ComponentCost.new(0.1,   0),
     ComponentCost.new(0.5,   0),
-    ComponentCost.new(  2,   0),
+    ComponentCost.new(  1,   0),
+    ComponentCost.new(  5,   0),
     ComponentCost.new( 10,   0),
+    ComponentCost.new( 20,   0),
     ComponentCost.new( 50,   0),
-    ComponentCost.new(200,   0),
     ComponentCost.new(  0,   1),
+    ComponentCost.new(  0,   2),
     ComponentCost.new(  0,   5),
-    ComponentCost.new(  0,  12),
-    ComponentCost.new(  0,  30),
-    ComponentCost.new(  0,  72)
+    ComponentCost.new(  0,   9)
   ]
 
   POWER_SOURCES = [
-    ComponentCost.new( 25,  0),
-    ComponentCost.new( 50,  0),
-    ComponentCost.new( 75,  0),
-    ComponentCost.new(100,  0),
-    ComponentCost.new(125,  0),
-    ComponentCost.new(  0,  3),
-    ComponentCost.new(  0,  4),
-    ComponentCost.new(  0,  5),
-    ComponentCost.new(  0,  6),
-    ComponentCost.new(  0,  7),
-    ComponentCost.new(  0,  8)
+    ComponentCost.new(  0,   0),
+    ComponentCost.new(  4,   0),
+    ComponentCost.new(  8,   0),
+    ComponentCost.new( 15,   0),
+    ComponentCost.new( 30,   0),
+    ComponentCost.new( 50,   0),
+    ComponentCost.new(100,   0),
+    ComponentCost.new(  0,   1),
+    ComponentCost.new(  0,   2),
+    ComponentCost.new(  0,   5),
+    ComponentCost.new(  0,   9)
   ]
 
   COMPONENT_TYPE_MAP = {
