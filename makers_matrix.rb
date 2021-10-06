@@ -2,6 +2,8 @@
 require_relative 'dice'
 require_relative 'maker_effects'
 
+# To run:
+#    ruby makers_matrix.rb item_level
 class MakersMatrix
   VERSION = "0.0.1 prealpha"
 
@@ -14,8 +16,10 @@ class MakersMatrix
     @effects_lookup = MakerEffects.new;
     @current_level = 1
 
-    @bene_added = ask_numeric_question("How many Intellect bene do you wish to use PER ROLL? (0-10, defaults to 0) ", 0, 10)
-    @skill_bene = ask_numeric_question("How many relevant skill levels do you have? (0-10, defaults to 0) ", 0, 10)
+    @bene_added = ask_numeric_question(
+      "How many Intellect bene do you wish to use PER ROLL? (0-10, defaults to 0) ", 0, 10)
+    @skill_bene = ask_numeric_question(
+      "How many relevant skill levels do you have? (0-10, defaults to 0) ", 0, 10)
 
     # note that the material used is always at the desired level for the item
     add_material(item_level)
